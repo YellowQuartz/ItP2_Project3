@@ -6,3 +6,16 @@ state
 !state/
 ~$*
 *.opendb
+*.ipch
+*.lastbuildstate
+Project3/Debug/Project3.tlog/unsuccessfulbuild
+*.db
+.vs/Project3/v16/.suo
+*.filters
+*.vcxproj
+*.pdb
+*.idb
+*.obj
+*.tlog
+*.log
+.vs/Project3/v16/.suo
