@@ -1,0 +1,8 @@
+.vscode/
+build/
+gamelog.txt
+action
+state
+!state/
+~$*
+*.opendb
