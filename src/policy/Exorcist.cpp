@@ -8,5 +8,5 @@ Move Exorcist::get_move(State* state, int depth) {
         state->get_legal_actions();
 
     auto actions = state->legal_actions;
-    return actions[(rand() + depth) % actions.size()];
+    return actions[0];
 }

@@ -20,11 +20,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\player\Exorcist.cpp" />
+    <ClCompile Include="..\src\player\random.cpp" />
+    <ClCompile Include="..\src\policy\Exorcist.cpp" />
     <ClCompile Include="..\src\policy\random.cpp" />
     <ClCompile Include="..\src\state\state.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\config.hpp" />
+    <ClInclude Include="..\src\policy\Exorcist.hpp" />
     <ClInclude Include="..\src\policy\random.hpp" />
     <ClInclude Include="..\src\state\state.hpp" />
   </ItemGroup>

@@ -24,6 +24,15 @@
     <ClCompile Include="..\src\main.cpp">
       <Filter>資源檔</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\player\random.cpp">
+      <Filter>資源檔</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\policy\Exorcist.cpp">
+      <Filter>資源檔</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\player\Exorcist.cpp">
+      <Filter>資源檔</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\policy\random.hpp">
@@ -33,6 +42,9 @@
       <Filter>標頭檔</Filter>
     </ClInclude>
     <ClInclude Include="..\src\config.hpp">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\policy\Exorcist.hpp">
       <Filter>標頭檔</Filter>
     </ClInclude>
   </ItemGroup>

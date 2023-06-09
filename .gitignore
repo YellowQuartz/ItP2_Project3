@@ -19,3 +19,6 @@ Project3/Debug/Project3.tlog/unsuccessfulbuild
 *.tlog
 *.log
 .vs/Project3/v16/.suo
+*.db
+*.filters
+*.vcxproj
