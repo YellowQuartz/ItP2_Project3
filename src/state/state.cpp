@@ -6,14 +6,21 @@
 #include "../config.hpp"
 
 
-/**
- * @brief evaluate the state
- * 
- * @return int 
- */
-int State::evaluate(){
-  // [TODO] design your own evaluation function
-  return 0;
+float State::evaluate(){
+    float answer = -1000;
+
+    for (int i = 0; i < BOARD_H; i += 1) {
+        for (int j = 0; j < BOARD_W; j += 1) {
+            //answer += board.board[this->player][i][j] - board.board[1 - this->player][i][j];
+            if (board.board[this->player][i][j] == 6) {
+                answer += 1000;
+            }
+            answer -= board.board[1 - this->player][i][j];
+            answer += board.board[this->player][i][j] * 10;
+        }
+    }
+
+    return answer;
 }
 
 
