@@ -6,17 +6,16 @@
 #include "../config.hpp"
 
 
+static const int material_table[7] = { 0, 2, 6, 7, 8, 20, 100 };
+
 float State::evaluate(){
-    float answer = -1000;
+    float answer = 0;
 
     for (int i = 0; i < BOARD_H; i += 1) {
         for (int j = 0; j < BOARD_W; j += 1) {
             //answer += board.board[this->player][i][j] - board.board[1 - this->player][i][j];
-            if (board.board[this->player][i][j] == 6) {
-                answer += 1000;
-            }
-            answer -= board.board[1 - this->player][i][j];
-            answer += board.board[this->player][i][j] * 10;
+            answer += material_table[board.board[player][i][j]];
+            answer -= material_table[board.board[1 - player][i][j]];
         }
     }
 
