@@ -14,16 +14,21 @@ State* root;
  * @param fin
  */
 void read_board(std::ifstream& fin) {
-    Board board;
-    int player;
-    fin >> player;
+    int board[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int p;
+    fin >> p;
+    Player player = p == 0 ? (Player) WHITE : (Player) BLACK;
 
     for (int pl = 0; pl < 2; pl++) {
+        int key = 1 << 30;
         for (int i = 0; i < BOARD_H; i++) {
             for (int j = 0; j < BOARD_W; j++) {
                 int c; fin >> c;
+
+                key >>= 1;
+                if (c == 0) continue;
                 // std::cout << c << " ";
-                board.board[pl][i][j] = c;
+                board[2 * (c - 1) + pl] |= key;
             }
             // std::cout << std::endl;
         }

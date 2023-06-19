@@ -14,7 +14,7 @@ Move Exorcist::get_move(State* state) {
 }
 
 Exorcist::Result Exorcist::search(State* state, float alpha, float beta, int depth, bool forPlayer) {
-    static FILE* fp = fopen("output.txt", "w+");
+    //static FILE* fp = fopen("output.txt", "w+");
     //fprintf(fp, "%f %f %d\n", alpha, beta, depth);
     //fprintf(fp, "%s", state->encode_state().c_str());
 
@@ -40,10 +40,10 @@ Exorcist::Result Exorcist::search(State* state, float alpha, float beta, int dep
                 }
                 alpha = std::max(alpha, value);
 
-                if (depth == maxDepth) {
+                /*if (depth == maxDepth) {
                     fprintf(fp, "%d %lu %lu / %lu %lu : %f\n", depth, move.first.first, move.first.second, move.second.first, move.second.second, value);
                     fprintf(fp, "%s", state->encode_state().c_str());
-                }
+                }*/
 
                 if (alpha >= beta) {
                     break;
@@ -62,10 +62,10 @@ Exorcist::Result Exorcist::search(State* state, float alpha, float beta, int dep
                 }
                 beta = std::min(beta, value);
 
-                if (depth == maxDepth) {
+                /*if (depth == maxDepth) {
                     fprintf(fp, "%d %lu %lu / %lu %lu : %f\n", depth, move.first.first, move.first.second, move.second.first, move.second.second, value);
                     fprintf(fp, "%s", state->encode_state().c_str());
-                }
+                }*/
 
                 if (beta <= alpha) {
                     break;

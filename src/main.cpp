@@ -395,7 +395,7 @@ bool valid_move(Move move, std::vector<Move>& legal_moves){
 }
 
 
-static const int material_table[7] = {0, 2, 6, 7, 8, 20, 100};
+static const int material_table[7] = {0, 126, 781, 825, 1276, 2538 };
 
 int main(int argc, char** argv) {
   assert(argc == 3);
@@ -463,6 +463,8 @@ int main(int argc, char** argv) {
       log << x_axis[action.first.second] << y_axis[action.first.first] << " → " \
           << x_axis[action.second.second] << y_axis[action.second.first] << "\n";
       log << data;
+      game.player = !game.player;
+      game.game_state = WIN;
       break;
     }else{
       temp = game.next_state(action);
