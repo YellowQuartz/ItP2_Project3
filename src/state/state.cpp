@@ -11,15 +11,12 @@ std::map<int, int> twos_table = { {1, 0},  {2, 1},  {4, 2},  {8, 3},  {16, 4},  
 
 float State::evaluate(){
     float answer = 0;
-    /*
-    for (int i = 0; i < BOARD_H; i += 1) {
-        for (int j = 0; j < BOARD_W; j += 1) {
-            //answer += board.board[this->player][i][j] - board.board[1 - this->player][i][j];
-            answer += material_table[board.board[player][i][j]];
-            answer -= material_table[board.board[1 - player][i][j]];
-        }
-    }
-    */
+    answer += material_table[1] * countOnes(getBoardbyPiece(pawn));
+    answer += material_table[2] * countOnes(getBoardbyPiece(rook));
+    answer += material_table[3] * countOnes(getBoardbyPiece(bishop));
+    answer += material_table[4] * countOnes(getBoardbyPiece(knight));
+    answer += material_table[5] * countOnes(getBoardbyPiece(queen));
+    answer += material_table[6] * countOnes(getBoardbyPiece(king));
     return answer;
 }
 
@@ -36,7 +33,7 @@ State* State::next_state(Move move){
         newBoard[i] = this->board[i];
     }
     int fromKey = 1 << pointToIndex(move.first);
-    int toKey   = 1 << pointToIndex(move.first);
+    int toKey   = 1 << pointToIndex(move.second);
     int mask = universe - fromKey - toKey;
     
     for (int i = 0; i < 12; i++) {
@@ -48,7 +45,7 @@ State* State::next_state(Move move){
             newBoard[i] &= mask;
         }
     }
-    //promotion for pawn
+    //promotion for pawns
     int queenMask = universe - queenZone;
     int whitePromoted = newBoard[0] & queenZone;
     newBoard[0] &= queenMask;
@@ -57,8 +54,9 @@ State* State::next_state(Move move){
     newBoard[1] &= queenMask;
     newBoard[9] |= blackPromoted;
   
+
     State* next_state = new State(newBoard, this->opponent());
-  
+
     if(this->game_state != WIN)
         next_state->get_legal_actions();
     return next_state;
@@ -76,7 +74,7 @@ void State::get_legal_actions(){
   // This method is not very efficient
   // You can redesign it
   std::vector<Move> all_actions;
-  int key = 1 << 29, antiKey = 1;
+  int key = 1 << 29;
   int pawnBoard = this->getBoardbyPiece(pawn);
   int knightBoard = this->getBoardbyPiece(knight);
   int kingBoard = this->getBoardbyPiece(king);
@@ -87,50 +85,59 @@ void State::get_legal_actions(){
   int playerBoard = this->getPlayerBoard();
   int opponentBoard = this->getOpponentBoard();
 
+
   for (int i = 0; i < 30; i++) {
       Point cur = indexToPoint(29 - i);
       int moves = pawnAttack(key & opponentBoard, this->opponent()) & pawnBoard;
       for (Point pt : bitScan(moves)) {
+          //std::cout << 1 << " " << pt.first << " " << pt.second << " " << cur.first << " " << cur.second << "\n";
           all_actions.push_back(Move(pt, cur));
       }
       moves = pawnMove(key & (universe - opponentBoard - playerBoard), this->opponent()) & pawnBoard;
       for (Point pt : bitScan(moves)) {
+          //std::cout << 2 << " " << pt.first << " " << pt.second << " " << cur.first << " " << cur.second << "\n";
           all_actions.push_back(Move(pt, cur));
       }
       moves = knightAttack(key & (universe - playerBoard)) & knightBoard;
       for (Point pt : bitScan(moves)) {
+          //std::cout << 3 << " " << pt.first << " " << pt.second << " " << cur.first << " " << cur.second << "\n";
           all_actions.push_back(Move(pt, cur));
       }
       moves = kingAttack(key & (universe - playerBoard)) & kingBoard;
       for (Point pt : bitScan(moves)) {
+          //std::cout << 4 << " " << pt.first << " " << pt.second << " " << cur.first << " " << cur.second << "\n";
+          //std::cout << "Here " << this->player << " " << key << " " << playerBoard << " " << (key & (universe - playerBoard)) << " " << moves << std::endl;
           all_actions.push_back(Move(pt, cur));
       }
       
-      if (bishopBoard & antiKey) {
-          moves = bishopAttack(i, playerBoard, opponentBoard);
+      if (bishopBoard & key) {
+          moves = bishopAttack(29 - i, playerBoard, opponentBoard);
           for (Point pt : bitScan(moves)) {
-              all_actions.push_back(Move(pt, cur));
+              //std::cout << 5 << " " << pt.first << " " << pt.second << " " << cur.first << " " << cur.second << "\n";
+              all_actions.push_back(Move(cur, pt));
           }
       }
-      if (rookBoard & antiKey) {
-          moves = rookAttack(i, playerBoard, opponentBoard);
+      if (rookBoard & key) {
+          moves = rookAttack(29 - i, playerBoard, opponentBoard);
           for (Point pt : bitScan(moves)) {
-              all_actions.push_back(Move(pt, cur));
+              //std::cout << 7 << " " << pt.first << " " << pt.second << " " << cur.first << " " << cur.second << "\n";
+              all_actions.push_back(Move(cur, pt));
           }
       }
 
-      if (queenBoard & antiKey) {
-          moves = bishopAttack(i, playerBoard, opponentBoard);
-          moves |= rookAttack(i, playerBoard, opponentBoard);
+      if (queenBoard & key) {
+          moves = bishopAttack(29 - i, playerBoard, opponentBoard);
+          moves |= rookAttack(29 - i, playerBoard, opponentBoard);
+          //printf("Queen : %d %d %d %d %d\n", queenBoard, antiKey, i, bishopAttack(i, playerBoard, opponentBoard), rookAttack(i, playerBoard, opponentBoard));
           for (Point pt : bitScan(moves)) {
-              all_actions.push_back(Move(pt, cur));
+              //std::cout << 8 << " " << pt.first << " " << pt.second << " " << cur.first << " " << cur.second << "\n";
+              all_actions.push_back(Move(cur, pt));
           }
       }
       
-      antiKey <<= 1;
       key >>= 1;
   }
-  //std::cout << "\n";
+  //std::cout << queenBoard << std::endl;
   this->legal_actions = all_actions;
 }
 
@@ -176,6 +183,7 @@ State::State(int* board, Player player) {
 
 int State::getPlayerBoard() {
     if (this->playerBoard == -1) {
+        this->playerBoard = 0;
         int start = this->player == WHITE ? 0 : 1;
 
         for (int i = start; i < 12; i += 2) {
@@ -186,11 +194,12 @@ int State::getPlayerBoard() {
 }
 
 Player State::opponent() {
-    return this->player == WHITE ? BLACK : WHITE;
+    return (this->player == WHITE) ? BLACK : WHITE;
 }
 
 int State::getOpponentBoard() {
     if (this->opponentBoard == -1) {
+        this->opponentBoard = 0;
         int start = this->player == WHITE ? 1 : 0;
 
         for (int i = start; i < 12; i += 2) {
@@ -218,7 +227,7 @@ void State::checkWin() {
 
 char* State::encode_state() {
     int key = 1 << 29, index = 0;
-    char answer[100];
+    char* answer = (char*) malloc(sizeof(char) * 100);
     answer[index++] = this->player == WHITE ? 0 : 1;
     answer[index++] = '\n';
     for (int i = 0; i < BOARD_H; i++) {
@@ -226,12 +235,13 @@ char* State::encode_state() {
             answer[index] = '0';
             for (int k = 0; k < 12; k++) {
                 if (key & this->board[k]) {
-                    answer[index] = '1' + k / 2;
+                    answer[index] = '1' + (k / 2);
                     break;
                 }
             }
             index++;
             answer[index++] = ' ';
+            key >>= 1;
         }
         answer[index++] = '\n';
     }
@@ -240,16 +250,15 @@ char* State::encode_state() {
 }
 
 Point indexToPoint(int index) {
-    index = 29 - index;
-    return Point(index % 5, index / 5);
+    return Point(5 - (index / 5), 4 - (index % 5));
 }
 
 int pointToIndex(Point point) {
-    return 29 - point.first - point.second * 5;
+    return 29 - point.first * 5 - point.second;
 }
 
 int State::getBoardbyPiece(Piece piece) {
-    int index = (piece / 3 * 2) + this->player == WHITE ? 0 : 1;
+    int index = (piece / 3 * 2) + (this->player == WHITE ? 0 : 1);
     return this->board[index];
 }
 
@@ -350,4 +359,13 @@ std::vector<Point> binaryBitScan(int segment, int size, int offset) {
 
 std::vector<Point> bitScan(int board) {
     return binaryBitScan(board, 30, 0);
+}
+
+int countOnes(int board) {
+    int answer = 0;
+    while (board != 0) {
+        answer++;
+        board &= board - 1;
+    }
+    return answer;
 }

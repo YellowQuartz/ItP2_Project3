@@ -150,5 +150,6 @@ std::vector<Point> binaryBitScan(int segment, int size, int offset);
 std::vector<Point> bitScan(int board);
 Point indexToPoint(int index);
 int pointToIndex(Point point);
+int countOnes(int board);
 
 #endif

@@ -51,14 +51,22 @@ int main(int argc, char** argv){
   }
   */
 
-  std::cout << "Yeah\n";
+  /*for (int i = 0; i < 6; i++) {
+      for (int j = 0; j < 5; j++) {
+        printf("(%d, %d), %d\n", i, j, pointToIndex(Point(i, j)));
+      }
+  }*/
 
-  State state;
+  int board[12] = { 2976,16252928,16,33554432,8,67108864,4,134217728,2,268435456,1,536870912 };
 
-  std::cout << state.encode_state() << std::endl;
+  State state = State(board, WHITE);
+
+  std::cout << "Board : \n" << state.encode_state() << "\n---" << std::endl;
   state.get_legal_actions();
   for(auto move: state.legal_actions){
+
     std::cout << move.first.first << " " << move.first.second << " " << move.second.first << " " << move.second.second << "\n";
+    
     auto temp = state.next_state(move);
     if(temp != NULL){
       std::cout << temp->encode_state();
