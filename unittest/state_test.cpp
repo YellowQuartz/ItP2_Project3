@@ -99,7 +99,7 @@ int main(int argc, char** argv){
 
   if(argc && strcmp(argv[1], "getBest") == 0){
       std::deque<Species> list;
-      FILE* fp = fopen("./Models/Gen066.txt", "r");
+      FILE* fp = fopen("./Models/Gen049.txt", "r");
       for (int count = 0; count < 32; count++) {
           Species s;
           for (int i = 0; i < weightsCount; i++) {
@@ -157,19 +157,23 @@ int main(int argc, char** argv){
       }
   }*/
 
-  /*int board[12] = { 31457281 + 31,0,0,64 * 32,0,0,0,0,0,0,1,16};
+  //int board[12] = { 32 + (1 << 19) + (1 << 13),5506048,0,1 << 25,0,0,4,8,2,1 << 27,1,1 << 29};
+  /*int board[12] = { 17408,352321536 >> 5,16,1 << 25,0,1<<26,4,4 << 25,2,4096,1,1 << 29 };
 
   State state = State(board, WHITE);
 
-  std::cout << state.encode_state();
-  state.get_legal_actions();
+  std::cout << state.encode_state();*/
+  /*state.get_legal_actions();
   for (auto move : state.legal_actions) {
       State* temp = state.next_state(move);
-      std::cout << temp->encode_state() << temp->evaluate(state.player) << std::endl;
-  }
+      std::cout << temp->encode_state() << "Eval : " << temp->evaluate(state.player) << std::endl;
+  }*/
 
-  Move best = Exorcist::get_move(&state);
-  printf("%d %d %d %d\n", best.first.first, best.first.second, best.second.first, best.second.second);*/
+  /*Move best = Exorcist::get_move(&state);
+  printf("player : %d\n", state.player);
+  printf("%ld %ld %ld %ld\n", best.first.first, best.first.second, best.second.first, best.second.second);
+
+  return 0;*/
 
   /*Species test1, test2;
   Species child = Species(test1, test2);
@@ -178,9 +182,28 @@ int main(int argc, char** argv){
   return 0;*/
 
   //init
-  for (int i = 0; i < 256; i++) {
-      population.push_back(Species());
-      //printf("%d\n", i);
+  if (argc == 3) {
+      FILE* fp = fopen(getPath(atoi(argv[2])).c_str(), "r");
+      for (int count = 0; count < 32; count++) {
+          Species s;
+          for (int i = 0; i < weightsCount; i++) {
+              fscanf(fp, "%f", &s.weights[i]);
+          }
+          population.push_back(s);
+      }
+
+      printf("Loaded from checkpoint\n");
+
+      for (int i = 0; i < 224; i++) {
+          int fIndex1 = std::rand() % 33, fIndex2 = std::rand() % 33;
+          population.push_back(Species(population[fIndex1], population[fIndex2]));
+      }
+  }
+  else {
+    for (int i = 0; i < 256; i++) {
+          population.push_back(Species());
+        //printf("%d\n", i);
+    }
   }
 
   int target = atoi(argv[1]);
@@ -212,9 +235,12 @@ int main(int argc, char** argv){
       }
 
       //reproduce
-      for (int i = 0; i < 224; i++) {
+      for (int i = 0; i < 96; i++) {
           int fIndex1 = std::rand() % 33, fIndex2 = std::rand() % 33;
           population.push_back(Species(population[fIndex1], population[fIndex2]));
+      }
+      for (int i = 0; i < 128; i++) {
+          population.push_back(Species());
       }
       //printf("After reproduction : %ld\n", population.size());
 
