@@ -105,13 +105,14 @@ class State{
     //You may want to add more property for a state
     GameState game_state = (GameState) UNKNOWN;
     int board[12];
-    int player = WHITE;
+    Player player = WHITE;
     std::vector<Move> legal_actions;
 
     int playerBoard, opponentBoard;
     void checkWin();
 
     int getBoardbyPiece(Piece pieceType);
+    int getOpponentBoardbyPiece(Piece pieceType);
 
     State();
     State(Player player);
@@ -123,7 +124,7 @@ class State{
     int getOpponentBoard();
     static int transform(int board, int magic, int offset);
     
-    float evaluate();
+    float evaluate(Player side);
     State* next_state(Move move);
     void get_legal_actions();
     char* encode_state();

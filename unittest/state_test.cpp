@@ -1,40 +1,56 @@
 #include <iostream>
 #include <cstdlib>
+#include <sstream>
 
 #include "../src/state/state.hpp"
 #include "../src/config.hpp"
+#include "../src/policy/Exorcist.hpp"
 
 #include<stdio.h>
 #include<set>
 
-std::set<std::string> possible;
-int maxDepth = 3;
+const int weightsCount = 30 * 6 * 32 * 2 + 64;
+class Species {
+public:
+    Species();
+    Species(Species, Species);
 
-int search(int depth, State* state) {
-    /*static FILE* fp1 = fopen("output1.txt", "w+");
-    static FILE* fp2 = fopen("output2.txt", "w+");
-    static FILE* fp3 = fopen("output3.txt", "w+");
-    static FILE* fp4 = fopen("output4.txt", "w+");
-    static int count = 0;*/
+    std::string toString();
+    float weights[weightsCount];
+};
 
-    if (depth == maxDepth) {
-        return 1;
-    } else {
-        int answer = 0;
-        if (!state->legal_actions.size())
-            state->get_legal_actions();
-
-        for (auto move : state->legal_actions) {
-            auto temp = state->next_state(move);
-            answer += search(depth + 1, temp);
-        }
-        return answer;
+Species::Species() {
+    float max = -1, min = 1;
+    for (int i = 0; i < weightsCount; i++) {
+        this->weights[i] = ((float)rand() / (RAND_MAX)) - 0.5f;
+        this->weights[i] *= 2;
+        max = std::max(max, this->weights[i]);
+        min = std::min(min, this->weights[i]);
     }
+}
+
+std::string Species::toString() {
+    std::stringstream ss;
+    int wIndex = 0;
+    for (int pl = 0; pl < 2; pl++) {
+        for (int type = 0; type < 6; type++) {
+            for (int pos = 0; pos < 30; pos++) {
+                for (int target = 0; target < 32; target++) {
+                    ss << this->weights[wIndex++] << " ";
+                }
+                ss << "\n";
+            }
+            ss << "\n";
+        }
+    }
+    for (int i = 0; i < 64; i++) ss << this->weights[wIndex++] << " ";
+    ss << "\n";
+    return ss.str();
 }
 
 
 int main(int argc, char** argv){
-  srand(RANDOM_SEED);
+  srand(time(0));
   
   /*
   State* state = new State;
@@ -57,23 +73,27 @@ int main(int argc, char** argv){
       }
   }*/
 
-  int board[12] = { 2976,16252928,16,33554432,8,67108864,4,134217728,2,268435456,1,536870912 };
+  /*int board[12] = { 31457281 + 31,0,0,64 * 32,0,0,0,0,0,0,1,16};
 
   State state = State(board, WHITE);
 
-  std::cout << "Board : \n" << state.encode_state() << "\n---" << std::endl;
+  std::cout << state.encode_state();
   state.get_legal_actions();
-  for(auto move: state.legal_actions){
-
-    std::cout << move.first.first << " " << move.first.second << " " << move.second.first << " " << move.second.second << "\n";
-    
-    auto temp = state.next_state(move);
-    if(temp != NULL){
-      std::cout << temp->encode_state();
-    }else{
-      std::cout << "NULL\n";
-    }
+  for (auto move : state.legal_actions) {
+      State* temp = state.next_state(move);
+      std::cout << temp->encode_state() << temp->evaluate(state.player) << std::endl;
   }
+
+  Move best = Exorcist::get_move(&state);
+  printf("%d %d %d %d\n", best.first.first, best.first.second, best.second.first, best.second.second);*/
+
+  Species test;
+  State state;
+  Move bestMove = Exorcist::get_move(&state, test.weights);
+
+  //printf("%f\n", Species::Eval(state.board, ));
+  //printf("%s\n", test.toString().c_str());
+  printf("(%lu, %lu) (%lu, %lu)\n", bestMove.first.first, bestMove.first.second, bestMove.second.first, bestMove.second.second);
 
   return 0;
 }

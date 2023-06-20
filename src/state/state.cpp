@@ -9,14 +9,14 @@
 static const int material_table[7] = { 0, 2, 6, 7, 8, 20, 100 };
 std::map<int, int> twos_table = { {1, 0},  {2, 1},  {4, 2},  {8, 3},  {16, 4},  {32, 5},  {64, 6},  {128, 7},  {256, 8},  {512, 9},  {1024, 10},  {2048, 11},  {4096, 12},  {8192, 13},  {16384, 14},  {32768, 15},  {65536, 16},  {131072, 17},  {262144, 18},  {524288, 19},  {1048576, 20},  {2097152, 21},  {4194304, 22},  {8388608, 23},  {16777216, 24},  {33554432, 25},  {67108864, 26},  {134217728, 27},  {268435456, 28},  {536870912, 29} };
 
-float State::evaluate(){
+float State::evaluate(Player side){
     float answer = 0;
-    answer += material_table[1] * countOnes(getBoardbyPiece(pawn));
-    answer += material_table[2] * countOnes(getBoardbyPiece(rook));
-    answer += material_table[3] * countOnes(getBoardbyPiece(bishop));
-    answer += material_table[4] * countOnes(getBoardbyPiece(knight));
-    answer += material_table[5] * countOnes(getBoardbyPiece(queen));
-    answer += material_table[6] * countOnes(getBoardbyPiece(king));
+    for (int i = 0; i < 12; i += 2) {
+        answer += material_table[i / 2 + 1] * countOnes(this->board[i]);
+        answer -= material_table[i / 2 + 1] * countOnes(this->board[i + 1]);
+    }
+
+    answer *= side;
     return answer;
 }
 
@@ -216,11 +216,11 @@ int State::transform(int board, int magic, int offset) {
 
 void State::checkWin() {
     if (this->board[10] == 0) {
-        this->player = BLACK;
+        //this->player = BLACK;
         this->game_state = WIN;
     }
     else if (this->board[11] == 0) {
-        this->player = WHITE;
+        //this->player = WHITE;
         this->game_state = WIN;
     }
 }
@@ -228,7 +228,7 @@ void State::checkWin() {
 char* State::encode_state() {
     int key = 1 << 29, index = 0;
     char* answer = (char*) malloc(sizeof(char) * 100);
-    answer[index++] = this->player == WHITE ? 0 : 1;
+    answer[index++] = (this->player == WHITE ? '0' : '1');
     answer[index++] = '\n';
     for (int i = 0; i < BOARD_H; i++) {
         for (int j = 0; j < BOARD_W; j++) {
@@ -257,8 +257,13 @@ int pointToIndex(Point point) {
     return 29 - point.first * 5 - point.second;
 }
 
-int State::getBoardbyPiece(Piece piece) {
-    int index = (piece / 3 * 2) + (this->player == WHITE ? 0 : 1);
+int State::getBoardbyPiece(Piece pieceType) {
+    int index = (pieceType / 3 * 2) + (this->player == WHITE ? 0 : 1);
+    return this->board[index];
+}
+
+int State::getOpponentBoardbyPiece(Piece pieceType) {
+    int index = (pieceType / 3 * 2) + (this->player == WHITE ? 1 : 0);
     return this->board[index];
 }
 
