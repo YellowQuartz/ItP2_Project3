@@ -99,7 +99,7 @@ int main(int argc, char** argv){
 
   if(argc && strcmp(argv[1], "getBest") == 0){
       std::deque<Species> list;
-      FILE* fp = fopen("./Models/Gen017.txt", "r");
+      FILE* fp = fopen("./Models/Gen066.txt", "r");
       for (int count = 0; count < 32; count++) {
           Species s;
           for (int i = 0; i < weightsCount; i++) {

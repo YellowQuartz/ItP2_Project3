@@ -128,9 +128,6 @@ class State{
     State* next_state(Move move);
     void get_legal_actions();
     char* encode_state();
-    static void loadModel();
-
-    static bool hasModel;
 };
 
 
