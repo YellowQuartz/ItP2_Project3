@@ -6,7 +6,7 @@
 #include<stdio.h>
 
 #define INF 1E10
-#define maxDepth 5
+#define maxDepth 3
 
 Move Exorcist::get_move(State* state) {
     return search(state, -INF, INF, maxDepth, true, state->player).bestMove;

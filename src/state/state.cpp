@@ -8,16 +8,43 @@
 
 static const int material_table[7] = { 0, 2, 6, 7, 8, 20, 100 };
 std::map<int, int> twos_table = { {1, 0},  {2, 1},  {4, 2},  {8, 3},  {16, 4},  {32, 5},  {64, 6},  {128, 7},  {256, 8},  {512, 9},  {1024, 10},  {2048, 11},  {4096, 12},  {8192, 13},  {16384, 14},  {32768, 15},  {65536, 16},  {131072, 17},  {262144, 18},  {524288, 19},  {1048576, 20},  {2097152, 21},  {4194304, 22},  {8388608, 23},  {16777216, 24},  {33554432, 25},  {67108864, 26},  {134217728, 27},  {268435456, 28},  {536870912, 29} };
+bool State::hasModel = false;
+float weights[11584];
+
+void State::loadModel() {
+    FILE* fp = fopen("./best.txt", "r");
+    for (int i = 0; i < 11584; i++) {
+        fscanf(fp, "%f", &weights[i]);
+        printf("%f ", weights[i]);
+    }
+    State::hasModel = true;
+}
 
 float State::evaluate(Player side){
-    float answer = 0;
-    for (int i = 0; i < 12; i += 2) {
-        answer += material_table[i / 2 + 1] * countOnes(this->board[i]);
-        answer -= material_table[i / 2 + 1] * countOnes(this->board[i + 1]);
+    if (!State::hasModel) {
+        loadModel();
     }
 
-    answer *= side;
-    return answer;
+    float hidden[64], answer = 0;
+    int wIndex = 0;
+    for (int i = 0; i < 64; i++) hidden[i] = 0;
+    for (int pl = 0; pl < 2; pl++) {
+        for (int type = 0; type < 6; type++) {
+            for (int pos = 1 << 29, idx = 0; pos; pos >>= 1, idx++) {
+                for (int target = 0; target < 32; target++) {
+                    hidden[32 * pl + target] += ((this->board[type * 2 + pl] & pos) != 0) * weights[wIndex++];
+                    //fprintf(fp, "(%d %f %f) ", (board[type * 2 + pl] & pos != 0), this->weights[wIndex++], (board[type * 2 + pl] & pos != 0) * this->weights[wIndex++]);
+                }
+            }
+            //fprintf(fp, "\n");
+        }
+    }
+    //printf("\n");
+    for (int i = 0; i < 64; i++) {
+        //printf("%f\n", hidden[i]);
+        answer += hidden[i] * weights[wIndex++];
+    }
+    return answer * side;
 }
 
 
